@@ -1,50 +1,67 @@
 ﻿using System;
-using System.IO;
-using System.Threading;
-using TargetServerCommunicator;
+using TargetServerCommunicator.Data;
+using TargetServerCommunicator.Servers;
 
 namespace TestTargetServer
 {
     class Program
-    {       
-        static void TestJson()
+    {      
+        static void PrintTarget(Target target)
         {
-            Console.WriteLine("Reading test data...");
-            string data = File.ReadAllText("jsonTargets.txt");
-            Console.WriteLine(data);
+            Console.WriteLine();
+            Console.WriteLine("\tName: " + target.name);
+            Console.WriteLine("\t\tHits: " + target.hit);
+            Console.WriteLine("\t\tDuty Cycle: " + target.dutyCycle);
+            Console.WriteLine("\t\tLED: " + target.led);
+            Console.WriteLine("\t\tInput: " + target.input);
         }
-
         static void Main(string[] args)
-        {
-            TestJson();
+        {           
 
+            // Create a client to server interface
             string teamName = "sqrtdos";
-            var gameServer  = new TargetServerInterface(teamName);
+            var serverType  = GameServerType.Mock;
+            //serverType      = GameServerType.WebClient; // if you want the real server ... otherwise this will do
+            // make sure you have a way to specify the IP address and port dynamically at run time, e.g. through a GUI
+            var gameServer  = GameServerFactory.Create(serverType, teamName, "10.0.0.8", 3000);
             var data        = gameServer.RetrieveGameList();
+            
+            // kill anything that is running...make sure you handle WebExceptions
+            gameServer.StopRunningGame();
 
+            // Display the games retrieved from the server
             Console.WriteLine("Available Games:");
             foreach(var game in data)
             {
-                Console.WriteLine(game);
+                Console.WriteLine("\t" + game);
             }
 
+            // Starts a game
             Console.WriteLine("Start Game [Enter Name]?");
             var gameName = Console.ReadLine();
+            var targets = gameServer.RetrieveTargetList(gameName);
             gameServer.StartGame(gameName);
              
-            Console.WriteLine("Any key to stop:");
+            // Make sure the user can stop the stupid game....
+            Console.WriteLine("Type stop to stop [stop] other for target list");
+            var input = Console.ReadLine();
 
-            Console.WriteLine("Printing target data...");
-            var targets = gameServer.RetrieveTargetList(gameName);
-            foreach(var target in targets)
+            while (input != "stop")
             {
-                Console.WriteLine(target);
+                // Then print out the target data as it was "hit"
+                Console.WriteLine("Printing target data...");
+                targets = gameServer.RetrieveTargetList(gameName);
+                foreach (var target in targets)
+                {
+                    PrintTarget(target);
+                }
+                input = Console.ReadLine();
             }
-
+            // Then call to stop the game 
             Console.WriteLine("Stopping Game");
             gameServer.StopRunningGame();
             
-            
+            // and let the user gaulk
             Console.WriteLine("Any key to exit...");
             Console.ReadLine();
         }
