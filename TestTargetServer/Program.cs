@@ -12,8 +12,9 @@ namespace TestTargetServer
             Console.WriteLine("\tName: " + target.name);
             Console.WriteLine("\t\tHits: " + target.hit);
             Console.WriteLine("\t\tDuty Cycle: " + target.dutyCycle);
-            Console.WriteLine("\t\tLED: " + target.led);
-            Console.WriteLine("\t\tInput: " + target.input);
+				Console.WriteLine("\t\tLED: " + target.led);
+				Console.WriteLine("\t\tInput: " + target.input);
+				Console.WriteLine("\t\tScore: " + target.score);
         }
         static void Main(string[] args)
         {           
@@ -21,9 +22,10 @@ namespace TestTargetServer
             // Create a client to server interface
             string teamName = "sqrtdos";
             var serverType  = GameServerType.Mock;
-            //serverType      = GameServerType.WebClient; // if you want the real server ... otherwise this will do
+            serverType      = GameServerType.WebClient; // if you want the real server ... otherwise this will do
+
             // make sure you have a way to specify the IP address and port dynamically at run time, e.g. through a GUI
-            var gameServer  = GameServerFactory.Create(serverType, teamName, "10.0.0.8", 3000);
+            var gameServer  = GameServerFactory.Create(serverType, teamName, "192.168.1.80", 3000);
             var data        = gameServer.RetrieveGameList();
             
             // kill anything that is running...make sure you handle WebExceptions
