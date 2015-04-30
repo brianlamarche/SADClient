@@ -3,3 +3,5 @@
 ################################################################################
 
 /TestTargetServer/bin/Debug
+/TestGameGui/bin/Debug
+/TestGameGui/obj/Debug

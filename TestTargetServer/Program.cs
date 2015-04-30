@@ -25,7 +25,7 @@ namespace TestTargetServer
             serverType      = GameServerType.WebClient; // if you want the real server ... otherwise this will do
 
             // make sure you have a way to specify the IP address and port dynamically at run time, e.g. through a GUI
-            var gameServer  = GameServerFactory.Create(serverType, teamName, "192.168.1.80", 3000);
+            var gameServer  = GameServerFactory.Create(serverType, teamName, "192.168.1.3", 3000);
             var data        = gameServer.RetrieveGameList();
             
             // kill anything that is running...make sure you handle WebExceptions
